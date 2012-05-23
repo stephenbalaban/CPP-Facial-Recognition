@@ -1,3 +1,37 @@
 # A C++ Facial Recognition Program
 
 Using Eigenfaces
+
+## Usage:
+
+### Building The Script
+
+Dependencies (for OSX):
+	1) Ruby
+	2) Homebrew
+	3) GCC (brew install gcc)
+
+To compile, run:
+
+$ ./build.sh
+
+### Running the script (webcam):
+
+$ ./OnlineFaceRec
+'n' -> New person: BlahbalH <ENTER>
+'t' -> Start Training
+
+### Recognizing a single image
+
+$ ./OnlineFaceRec single paul.jpg
+
+
+### Running with train (training input file e.g. all10.txt)
+
+$ ./OnlineFaceRec train all10.txt
+...
+
+Contents of a train.txt file:
+id name    path_to_pgm (image)
+1 Stephen data/1_Stephen56.pgm
+1 Stephen data/1_Stephen57.pgm
