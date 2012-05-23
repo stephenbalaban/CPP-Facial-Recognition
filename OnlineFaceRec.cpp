@@ -663,7 +663,7 @@ int recognizeFromFilename(const char *rawImgFilename)
 	}
 	
 	// Crop and Normalize
-	normalizedImg = cropAndNormalize(greyscaleImg, faceRect);
+	normalizedSImg = cropAndNormalize(greyscaleImg, faceRect);
 
 	// get id from normalized face image
 	resultId = idFromNormalizedImg(normalizedImg, &confidence);
