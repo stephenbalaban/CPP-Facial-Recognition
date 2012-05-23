@@ -1,2 +1,6 @@
 data/
 Cambridge_FaceDB/
+out_eigenfaces.bmp
+out_averageImage.bmp
+facedata.xml
+rm 'out_averageImage.bmp'
