@@ -118,7 +118,6 @@ void printUsage()
 // Startup routine.
 int main( int argc, char** argv )
 {
-	printUsage();
 	if( argc >= 2 && strcmp(argv[1], "single") == 0) {
 		char *szFileRecognize;
 		if (argc == 3) {
@@ -150,6 +149,7 @@ int main( int argc, char** argv )
 		recognizeFileList(szFileTest);
 	}
 	else {
+		//	printUsage();
 		recognizeFromCam();
 	}
 	return 0;
@@ -331,7 +331,7 @@ int loadTrainingData(CvMat ** pTrainPersonNumMat)
 
 	// release the file-storage interface
 	cvReleaseFileStorage( &fileStorage );
-
+/*
 	printf("Training data loaded (%d training images of %d people):\n", nTrainFaces, nPersons);
 	printf("People: ");
 	if (nPersons > 0)
@@ -340,7 +340,7 @@ int loadTrainingData(CvMat ** pTrainPersonNumMat)
 		printf(", <%s>", personNames[i].c_str());
 	}
 	printf(".\n");
-
+*/
 	return 1;
 }
 
@@ -591,15 +591,13 @@ int idFromNormalizedImg(IplImage* normalizedImg, float* pConfidence)
 	float *projectedTestFace = 0;
 	int newPersonFaces = 0;
 
-	printf("Recognizing person in the single file.\n");
-
 	// Load the previously saved training data
 	if( loadTrainingData( &trainPersonNumMat ) ) {
 		faceWidth = pAvgTrainImg->width;
 		faceHeight = pAvgTrainImg->height;
 	}
 	else {
-		printf("ERROR in recognizeFromCam(): Couldn't load the training data!\n");
+		fprintf(stderr, "ERROR in recognizeFromCam(): Couldn't load the training data!\n");
 		exit(1);
 	} // done loading Training Data, refactor plox
 
@@ -624,8 +622,8 @@ int idFromNormalizedImg(IplImage* normalizedImg, float* pConfidence)
 	nearestImg = findNearestNeighbor(projectedTestFace, pConfidence);
 	nearestClass  = trainPersonNumMat->data.i[nearestImg];
 
-	printf("Most likely person in camera: '%d' (confidence=%f).\n", nearestClass, *pConfidence);
-	printf("Person with Id %d, <%s>\n", nearestClass, personNames[nearestClass - 1].c_str());
+	//printf("Most likely person in camera: '%d' (confidence=%f).\n", nearestClass, *pConfidence);
+	//printf("Person with Id %d, <%s>\n", nearestClass, personNames[nearestClass - 1].c_str());
 	return nearestClass;
 }
 
@@ -650,7 +648,7 @@ int recognizeFromFilename(const char *rawImgFilename)
 	CvHaarClassifierCascade* faceCascade;
 	faceCascade = (CvHaarClassifierCascade*)cvLoad(faceCascadeFilename, 0, 0, 0 );
 	if( !faceCascade ) {
-		printf("ERROR in recognizeFromCam(): Could not load Haar cascade Face detection classifier in '%s'.\n", faceCascadeFilename);
+		fprintf(stderr, "ERROR in recognizeFromCam(): Could not load Haar cascade Face detection classifier in '%s'.\n", faceCascadeFilename);
 		exit(1);
 	}
 
@@ -663,12 +661,13 @@ int recognizeFromFilename(const char *rawImgFilename)
 	}
 	
 	// Crop and Normalize
-	normalizedSImg = cropAndNormalize(greyscaleImg, faceRect);
+	normalizedImg = cropAndNormalize(greyscaleImg, faceRect);
 
 	// get id from normalized face image
 	resultId = idFromNormalizedImg(normalizedImg, &confidence);
-	
-	printf("Got a result Id!: %d, now look that up in the database!\n", resultId);
+
+	// print result
+	printf("%d", resultId);
 	
 	cvReleaseImage( &greyscaleImg );
 	cvReleaseImage( &normalizedImg );
@@ -923,7 +922,7 @@ CvRect detectFaceInImage(const IplImage *inputImg, const CvHaarClassifierCascade
 	rects = cvHaarDetectObjects( detectImg, (CvHaarClassifierCascade*)cascade, storage,
 				search_scale_factor, 3, flags, minFeatureSize );
 	t = (double)cvGetTickCount() - t;
-	printf("[Face Detection took %d ms and found %d objects]\n", cvRound( t/((double)cvGetTickFrequency()*1000.0) ), rects->total );
+	//printf("[Face Detection took %d ms and found %d objects]\n", cvRound( t/((double)cvGetTickFrequency()*1000.0) ), rects->total );
 
 	// Get the first detected face (the biggest).
 	if (rects->total > 0) {
